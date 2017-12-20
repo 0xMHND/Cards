@@ -1,0 +1,9 @@
+[package]
+name = "cards"
+version = "0.1.0"
+authors = ["arifimm"]
+
+[dependencies]
+
+rand = "0.3.14"
+libcoinche = "0.2.0"
