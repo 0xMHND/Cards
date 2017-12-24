@@ -45,12 +45,11 @@ use libcoinche::cards::Card;
 use libcoinche::cards::Hand;
 use libcoinche::cards::Deck;
 use libcoinche::cards::Suit;
-use libcoinche::cards::Rank;
+//use libcoinche::cards::Rank;
 
 
 const PLAYERS : usize = 5;
 const ITERATION : usize = 1000;
-const CATEGORY : usize = 7;
 const TARGET : usize = Categories::TwoVsTwo as usize;
 const BASE : usize = Categories::TwoX as usize;
 
@@ -82,7 +81,7 @@ fn main(){
 
 /* CALCULATE */
     
-    for x in 0..ITERATION{
+    for _x in 0..ITERATION{
         seed = rand::random();
         Deck::shuffle_seeded(&mut deck_of_cards, &seed);
 
@@ -101,7 +100,7 @@ fn main(){
 
     let mut whole_iter : [f32; 7] = [0.;7];
 
-    /**special stat**/
+    /* *special stat* */
     let mut two_x_stat : [u32; 3] = [0;3];
 
     for x in &tests{
@@ -116,7 +115,7 @@ fn main(){
     let exp_stat = vec!["nothing", "Highest Card Ace", "2x", "3x", "4x", "2vs2", "Straight"];
     let percentage = 100./(PLAYERS as f32* ITERATION as f32);
     for x in 0..7{
-        println!( "{:0.2}% | {:0.2}% ||| {: <16} = {: <5}", stat[x] as f32 * percentage, whole_iter[x] * percentage, exp_stat[x], stat[x]);
+        println!( "{:>6.2}% | {:>6.2}% ||| {:<16} = {:<5}", stat[x] as f32 * percentage, whole_iter[x] * percentage, exp_stat[x], stat[x]);
     }
 
     println!( "Freq({}) given {} exist at least one hand", exp_stat[TARGET], exp_stat[BASE]);
@@ -143,8 +142,8 @@ fn per_game_stats(one_game_stat: &[u32; 7], categ: usize) -> usize {
 
 fn is_straight(hand: Hand) -> bool{
     let mut strt = 0;
-    let mut curr_card : i32 = 0;
-    let mut prev_card : i32 = 0;
+    let mut curr_card : i32 ;
+    let mut prev_card : i32 ;
 
 
     if Hand::has_any(hand, Suit::Heart){
@@ -290,29 +289,23 @@ fn deal_cards(hands: &mut [Hand], players_n: usize) {
 
 
     let mut cnt = 0;
-    let mut cnt_cards = 0;
     let mut hand_n = 0;
 
     seed = rand::random();
     Deck::shuffle_seeded(&mut deck_of_cards, &seed);
 
-    for i in 0..32{
+    loop {
+        if Deck::is_empty(&mut deck_of_cards) { break; }
         card = Deck::draw(&mut deck_of_cards);
 
         if Card::rank(card) as usize >= ( 1 << (8 - players_n) ) {
-            cnt_cards += 1;
             cnt += 1;
             if cnt < 5 {
-                //println! ( "{} card {} rank [{}] : {}", cnt, cnt_cards, Card::rank(card) as usize, Card::to_string(card) ); 
-                //println!("add to hand");
                 Hand::add(&mut hands[hand_n], card);
             }
             else{
                 cnt = 1;
                 hand_n += 1;
-               // println!("start new hand");
-               // println! ( "{} card {} rank [{}] : {}", cnt, cnt_cards, Card::rank(card) as usize, Card::to_string(card) ); 
-                //println!("add to hand");
                 Hand::add(&mut hands[hand_n], card);
             }
         }
